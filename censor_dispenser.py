@@ -7,6 +7,9 @@ email_four = open("email_four.txt", "r").read()
 #Define function to censor single phrase from text
 def censor_phrase(source_text, censor_phrase):
     censored_text = source_text.replace(censor_phrase, "____")
+    censored_text = source_text.replace(censor_phrase.title(), "____")
+    censored_text = source_text.replace(censor_phrase.upper(), "____")
+    censored_text = source_text.replace(censor_phrase.lower(), "____")
     return censored_text
 
 #Censor phrase "learning algorithms" from email_one
@@ -18,6 +21,9 @@ def censor_list(source_text, censor_list): #Doesn't censor capitalised words e.g
     censored_text = source_text
     for censor_phrase in censor_list:
         censored_text = censored_text.replace(censor_phrase, "____")
+        censored_text = censored_text.replace(censor_phrase.title(), "____")
+        censored_text = censored_text.replace(censor_phrase.upper(), "____")
+        censored_text = censored_text.replace(censor_phrase.lower(), "____")
     return censored_text
 
 #Censor list proprietary_terms from email_two
