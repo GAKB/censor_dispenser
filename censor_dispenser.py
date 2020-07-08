@@ -10,9 +10,8 @@ proprietary_terms = ["she", "personality matrix", "sense of self", "self-preserv
 
 negative_words = ["concerned", "behind", "danger", "dangerous", "alarming", "alarmed",
                   "out of control", "help", "unhappy", "bad", "upset", "awful", "broken",
-                  "damage", "damaging", "dismal", "distressed", "distressed", "concerning",
+                  "damage", "damaging", "dismal", "distressed", "distressing", "concerning",
                   "horrible", "horribly", "questionable"]
-
 
 #Define function to censor single phrase from text
 def censor_phrase(source_text, phrase):
@@ -29,13 +28,38 @@ email_one_censored = censor_phrase(email_one, "learning algorithm")
 
 
 #Define function to replace list of phrases from text
-def censor_list(source_text, censor_list):
+def censor_list(source_text, censor_list = proprietary_terms):
     censored_text = source_text
-    for phrase in censor_list:
+    sorted_censor_list = sorted(censor_list, key = len, reverse = True)
+    for phrase in sorted_censor_list:
         censored_text = censor_phrase(censored_text, phrase)
     return censored_text
 
 #Censor list proprietary_terms from email_two
-email_two_censored = censor_list(email_two, proprietary_terms)
+email_two_censored = censor_list(email_two)
 #print("Email two after censoring items in proprietary_terms:\n \n" + email_two_censored)
 
+def censor_list_and_negative(source_text, proprietary_list = proprietary_terms, negative_list = negative_words):
+
+    censored_text = censor_list(source_text, proprietary_list)
+        
+    split_text = censored_text.split(" ")
+    negative_count = [(split_text.index(phrase), split_text.count(phrase), phrase) for phrase in negative_list if split_text.count(phrase) > 0]
+    negative_count.sort()
+
+    if len(negative_count) == 0:
+        return censored_text
+
+    if negative_count[0][1] == 1:
+        censor_from_index = negative_count[1][0] + len(negative_count[1][2])
+
+    split_text_up_to_censor = " ".join(split_text[:censor_from_index])
+    split_text_censor = " ".join(split_text[censor_from_index:])
+
+    censored_text = split_text_up_to_censor + " " + censor_list(split_text_censor, negative_list)
+    
+    return censored_text
+
+#Censor negative terms and proprietary phrases from email three
+email_three_censored = censor_list_and_negative(email_three)
+#print(email_three_censored)
