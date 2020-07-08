@@ -72,10 +72,10 @@ def censor_list_and_negative(source_text, proprietary_list = proprietary_terms, 
     #Create a list of all negative words and their index positions within split_text    
     for phrase in negative_list_sorted:
         for i in range(0, len(split_text)):
-            if phrase in split_text[i]:
+            if phrase.title() in split_text[i].title():
                 negative_indicies.append((i, phrase))
     negative_indicies.sort()
-        
+    
     if len(negative_indicies) == 0:
         return censored_text
 
