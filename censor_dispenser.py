@@ -15,10 +15,13 @@ negative_words = ["concerned", "behind", "danger", "dangerous", "alarming", "ala
 
 #Define function to censor single phrase from text
 def censor_phrase(source_text, phrase):
+    
     censored_text = source_text
+    
     censored_text = censored_text.replace(phrase, blank)
     censored_text = censored_text.replace(phrase.title(), blank)
     censored_text = censored_text.replace(phrase.upper(), blank)
+    
     return censored_text
 
 #Censor phrase "learning algorithms" from email_one
@@ -29,29 +32,39 @@ email_one_censored = censor_phrase(email_one, "learning algorithm")
 
 #Define function to replace list of phrases from text
 def censor_list(source_text, censor_list = proprietary_terms):
+    
     censored_text = source_text
     sorted_censor_list = sorted(censor_list, key = len, reverse = True)
+    
     for phrase in sorted_censor_list:
+        
         censored_text = censor_phrase(censored_text, phrase)
+        
     return censored_text
 
 #Censor list proprietary_terms from email_two
 email_two_censored = censor_list(email_two)
 #print("Email two after censoring items in proprietary_terms:\n \n" + email_two_censored)
+#print()
 
 def censor_list_and_negative(source_text, proprietary_list = proprietary_terms, negative_list = negative_words):
 
     censored_text = censor_list(source_text, proprietary_list)
         
     split_text = censored_text.split(" ")
-    negative_count = [(split_text.index(phrase), split_text.count(phrase), phrase) for phrase in negative_list if split_text.count(phrase) > 0]
-    negative_count.sort()
-
-    if len(negative_count) == 0:
+    negative_list_sorted = sorted(negative_list, key = len, reverse = True)
+    negative_indicies = []
+    
+    for phrase in negative_list_sorted:
+        for i in range(0, len(split_text)):
+            if phrase in split_text[i]:
+                negative_indicies.append((i, phrase))
+    negative_indicies.sort()
+        
+    if len(negative_indicies) == 0:
         return censored_text
-
-    if negative_count[0][1] == 1:
-        censor_from_index = negative_count[1][0] + len(negative_count[1][2])
+    
+    censor_from_index = negative_indicies[1][0] + 1
 
     split_text_up_to_censor = " ".join(split_text[:censor_from_index])
     split_text_censor = " ".join(split_text[censor_from_index:])
@@ -62,4 +75,5 @@ def censor_list_and_negative(source_text, proprietary_list = proprietary_terms, 
 
 #Censor negative terms and proprietary phrases from email three
 email_three_censored = censor_list_and_negative(email_three)
-#print(email_three_censored)
+#print("Email three after censoring items in proprietary_terms and any negative_words after their second use:\n \n" + email_three_censored)
+#print()
