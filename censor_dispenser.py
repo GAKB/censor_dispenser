@@ -4,7 +4,7 @@ email_two = open("email_two.txt", "r").read()
 email_three = open("email_three.txt", "r").read()
 email_four = open("email_four.txt", "r").read()
 
-blank = "____"
+
 proprietary_terms = ["she", "personality matrix", "sense of self", "self-preservation",
                      "learning algorithm", "her", "herself"]
 
@@ -12,6 +12,11 @@ negative_words = ["concerned", "behind", "danger", "dangerous", "alarming", "ala
                   "out of control", "help", "unhappy", "bad", "upset", "awful", "broken",
                   "damage", "damaging", "dismal", "distressed", "distressing", "concerning",
                   "horrible", "horribly", "questionable"]
+
+
+
+
+blank = "____"
 
 
 
@@ -31,8 +36,8 @@ def censor_phrase(source_text, phrase):
 
 #Censor phrase "learning algorithms" from email_one
 email_one_censored = censor_phrase(email_one, "learning algorithm")
-#print("Email one after censoring 'learning algorithms':\n \n" + email_one_censored)
-#print()
+print("------- Email one censored -------\n \n" + email_one_censored)
+print()
 
 
 
@@ -53,8 +58,8 @@ def censor_list(source_text, censor_list = proprietary_terms):
 
 #Censor list proprietary_terms from email_two
 email_two_censored = censor_list(email_two)
-#print("Email two after censoring items in proprietary_terms:\n \n" + email_two_censored)
-#print()
+print("------- Email two censored -------\n \n" + email_two_censored)
+print()
 
 
 
@@ -93,5 +98,38 @@ def censor_list_and_negative(source_text, proprietary_list = proprietary_terms, 
 
 #Censor negative terms and proprietary phrases from email three
 email_three_censored = censor_list_and_negative(email_three)
-#print("Email three after censoring items in proprietary_terms and any negative_words after their second use:\n \n" + email_three_censored)
-#print()
+print("------- Email three censored -------\n \n" + email_three_censored)
+print()
+
+
+
+
+#Define full_censor function to remove all proprietary terms, negative words after 2nd use and words either side of
+def full_censor(source, proprietary = proprietary_terms, negative = negative_words):
+
+    censored_text = censor_list_and_negative(source)
+    split_text = censored_text.split(" ")
+    censored_indicies = []
+    alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    
+    for i in range(0, len(split_text)):
+        if blank in split_text[i]:
+            censored_indicies.append(i)
+
+    for i in censored_indicies:
+        for ch in alphabet:
+            if i-1 >= 0:
+                split_text[i-1] = split_text[i-1].replace(ch, "_")
+            if i+1 < len(split_text):
+                split_text[i+1] = split_text[i+1].replace(ch, "_")
+
+    fully_censored_text = " ".join(split_text)
+    
+    return fully_censored_text
+
+
+
+
+#Fully censor email four
+email_four_censored = full_censor(email_four)
+print("------- Email four censored -------\n\n" + email_four_censored)
